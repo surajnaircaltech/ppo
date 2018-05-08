@@ -7,8 +7,9 @@ def _make_network(hiddens, inpt, num_actions, scope='network', reuse=None):
         out = inpt
         for i, hidden in enumerate(hiddens):
             out = tf.layers.dense(out, hidden, name='d{}'.format(i),
-                bias_initializer=tf.constant_initializer(0.1),
-                kernel_initializer=tf.random_normal_initializer(0.0, 0.3))
+                                  bias_initializer=tf.constant_initializer(
+                                      0.1),
+                                  kernel_initializer=tf.random_normal_initializer(0.0, 0.3))
             out = tf.nn.tanh(out)
 
         # policy branch
@@ -34,7 +35,7 @@ def _make_network(hiddens, inpt, num_actions, scope='network', reuse=None):
         )
         sigma = tf.nn.softplus(sigma + 1e-5)
 
-        dist = tf.distributions.Normal(mu, sigma)
+        dist = tf.contrib.distributions.Normal(mu, sigma)
         policy = tf.squeeze(dist.sample(num_actions), [0])
 
         # value branch
@@ -48,6 +49,7 @@ def _make_network(hiddens, inpt, num_actions, scope='network', reuse=None):
             name='d3'
         )
     return policy, value, dist
+
 
 def make_network(hiddens):
     return lambda *args, **kwargs: _make_network(hiddens, *args, **kwargs)
